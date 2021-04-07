@@ -9,7 +9,7 @@ def fitness(individual):
 	index = 0
 	
 	#assign fitness values for all the intervals
-	while index < (individual.length - 1):
+	while index < (individual.notes.length - 1):
 		interval = abs(individual.notes[index] - individual.notes[index + 1])
 		#Unison, Perfect 4th, Perfect 5th, Octave
 		if interval == 0 or interval == 5 or interval == 7 or interval == 12:
@@ -26,7 +26,7 @@ def fitness(individual):
 		index += 1
 	
 	#add extra fitness to melodies ending on certain "good" pitches
-	lastNote = individual[individual.length - 1]
+	lastNote = individual.notes[individual.notes.length - 1]
 	#Ends on the 1 of the chord - C
 	if lastNote == 0 or lastNote == 12 or lastNote == 24:
 		fitness += 7
