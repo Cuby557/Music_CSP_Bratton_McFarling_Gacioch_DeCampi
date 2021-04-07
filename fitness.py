@@ -2,6 +2,7 @@
 Function to calculate the fitness of a melody object. Analyzes the intervals 
 between each note, assigning fitness points to each. Also, add bonus fitness 
 value points for ending on certain pitches.
+Not it's own class, but I wanted to get the code out to everyone to be checked
 """
 def fitness(individual):
 	fitness = 0
