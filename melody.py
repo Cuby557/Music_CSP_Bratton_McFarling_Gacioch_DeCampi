@@ -14,9 +14,10 @@ class Melody:
     def __init__(self, length):
         self.length = length
         self.notes = [0] * self.length
+        noteList = [0, 2, 4, 5, 7, 9, 11, 12, 14, 16, 17, 19, 21, 23, 24]
         i = 0
         while i < self.length:
-            self.notes[i] = random.randint(0, 14)
+            self.notes[i] = random.choice(noteList)
             i += 1
     def displayMelody(self):
         """
@@ -24,5 +25,5 @@ class Melody:
         """
         print(self.notes)
     
-m1 = Melody(10)
+m1 = Melody(9)
 m1.displayMelody()
