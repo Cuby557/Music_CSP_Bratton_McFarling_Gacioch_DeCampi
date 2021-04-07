@@ -6,7 +6,7 @@ import random
 class Melody:
     """
     Simple representation of  melody.  Assumes melody is in C major spanning
-    two octaves from c4 to c6 (inclusive) with 0 being c4 and c6 being 14.
+    two octaves from c4 to c6 (inclusive) with 0 being c4 and 24 being c6.
     Also assumes a pre-defined rhythmic structure, let's begin with saying
     that they are all eqaul duration notes. The single parameter specifies
     the number of notes in the melody.
