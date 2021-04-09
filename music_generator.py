@@ -6,14 +6,19 @@ from Music_Generator_GA.melody import Melody
 import random
 
 '''
-Creates initial individual for the GA to utilize
-(Otherwise, you get a bunch of ones and zeros
+Creates initial individual for the GA to utilize.
+(Otherwise, you get a bunch of ones and zeros)
+Does so by taking a random melody, shuffling the
+melody, and using that as an individual in the GA
 '''
 def create_individual(data):
-    return data[:]
+    individual = data[:]
+    random.shuffle(individual)
+    return individual
 
 '''
-Fitness function
+Fitness Function
+Sadly, someone else will have the explain this. A bit out of my league!
 '''
 def fitness (individual, data):
     fitness = 0
@@ -70,12 +75,23 @@ def mutate(individual):
         
 '''
 Selection Function
-NOT COMPLETED!
+This Selection Function find the Individual with the
+best Fitness result and keeps that. Only one Individual
+may be passed back to the GA. If multiple Individuals
+have the same Fitness result, the first one is returned.
 '''
 def selection(population):
-    pop_size = len(population)
-    print(population)
-    
+    #print(population)
+    best_individual = None
+    best_fitness_result = 0
+     
+    for individual in population:
+        if individual.fitness > best_fitness_result:
+            best_individual = individual
+            best_fitness_result = individual.fitness
+              
+    return best_individual
+         
 # Initial melody (nine notes) to utilize in GA
 beginning_melody = Melody(9)
 
@@ -84,7 +100,7 @@ data = beginning_melody.notes.copy()
 
 # Initialize the GA with the given parameters
 music_generator = pyeasyga.GeneticAlgorithm(data,
-                                            population_size=10,
+                                            population_size=200,
                                             generations=100,
                                             crossover_probability=0,
                                             mutation_probability=0.1,
@@ -95,7 +111,7 @@ music_generator = pyeasyga.GeneticAlgorithm(data,
 music_generator.create_individual = create_individual
 music_generator.fitness_function = fitness
 music_generator.mutate_function = mutate
-###music_generator.selection_function = selection
+music_generator.selection_function = selection
 
 # Run that sucker!
 music_generator.run()
