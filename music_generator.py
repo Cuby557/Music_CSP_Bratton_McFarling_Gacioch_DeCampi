@@ -2,7 +2,9 @@
 @author: Colby Bratton, Jack McFarling, Jonathan Gacioch, Jacob DeCampi
 '''
 from pyeasyga import pyeasyga
-from Music_Generator_GA.melody import Melody
+from melody import Melody
+from midiutil import MIDIFile
+import numpy as np
 import random
 
 '''
@@ -52,6 +54,18 @@ def fitness (individual, data):
     #ends on the 5 of the chord - G
     elif lastNote == 7 or lastNote == 19:
         fitness += 4
+
+    #add fitness to melodies with penultimate pitch being part of the dominant
+    penultNote = individual[len(individual) - 2]
+    #5 to 1, G natural
+    if penultNote == 7 or penultNote == 19:
+        fitness += 7
+    #7 to 1, B natural
+    elif penultNote == 11 or penultNote == 23:
+        penultNote += 6
+    #2 to 1, D natural
+    elif penultNote == 2 or penultNote == 14:
+        penultNote += 4
         
     return fitness
 
@@ -121,3 +135,26 @@ print("Initial Random Melody: ")
 print(beginning_melody.notes)
 print("Final Melody: ")
 print(music_generator.best_individual())
+
+best_temp = music_generator.best_individual()
+best_melody = best_temp[1]
+
+for index in range(len(best_melody)):
+    best_melody[index] = int(best_melody[index]) + 60
+
+track    = 0
+channel  = 0
+time     = 0    # In beats
+duration = 1    # In beats
+tempo    = 60   # In BPM
+volume   = 100  # 0-127, as per the MIDI standard
+
+MyMIDI = MIDIFile(1)  # One track, defaults to format 1 (tempo track is created
+                      # automatically)
+MyMIDI.addTempo(track, time, tempo)
+
+for i, pitch in enumerate(best_melody):
+    MyMIDI.addNote(track, channel, pitch, time + i, duration, volume)
+
+with open("melody.mid", "wb") as output_file:
+    MyMIDI.writeFile(output_file)
