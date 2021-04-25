@@ -22,7 +22,14 @@ def create_individual(data):
 
 '''
 Fitness Function
-Sadly, someone else will have the explain this. A bit out of my league!
+Evaluates the intervals between each note by using the 
+absolute value between each value. Then, based on 
+the corresponding interval we add a set amount of 
+fitness "points" to the fitness variable. Since higher 
+fitness is desired we set the more pleasing intervals 
+to higher values. Furthermore, after the interval checking
+we add fitness if a couple key musical elements occur 
+at the end of our melody.
 '''
 def fitness (individual, data):
     fitness = 0
