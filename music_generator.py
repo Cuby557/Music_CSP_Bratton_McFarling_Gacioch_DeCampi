@@ -62,10 +62,10 @@ def fitness (individual, data):
         fitness += 7
     #7 to 1, B natural
     elif penultNote == 11 or penultNote == 23:
-        penultNote += 6
+        fitness += 6
     #2 to 1, D natural
     elif penultNote == 2 or penultNote == 14:
-        penultNote += 4
+        fitness += 4
         
     return fitness
 
