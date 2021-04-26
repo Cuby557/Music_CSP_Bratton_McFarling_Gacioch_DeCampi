@@ -1,11 +1,34 @@
 '''
 @author: Colby Bratton, Jack McFarling, Jonathan Gacioch, Jacob DeCampi
+
+Genetic Algorithm to generate music of a specific genre. Works
+via the usage of the pyeasyGA library which gives us a baseline
+for constructing a Genetic Algorithm. Requires the creation of 
+functions and definitions for the fitness function, mutation functions,
+selection function, and the classification of how a single individual
+is to be represented in the algorithm itself. Allows us to provide these
+functions and then execute to algorithm through simple functions calls.
+All of the finer details are handled under the hood by the library.
 '''
+
+'''
+HOW TO RUN:
+It's quite simple! Adjust the number of notes you want in the
+melody by changing the initial parameter, x, of Melody(x)
+(see below) to whatever you'd like! Once you have the desired
+number of notes set, you may execute the code and the rest
+is handled for you!
+
+Note: You can also play around with the different options
+of the GA in the initialization function of the GA (see below).
+This will affect the generation of the melody depending on the
+options you choose to change or not change.
+'''
+
 from pyeasyga import pyeasyga
 from Music_Generator_GA.melody import Melody
-from midiutil import MIDIFile
+from Music_Generator_GA.midi import MIDI
 import random
-import numpy as np
 
 '''
 Creates initial individual for the GA to utilize.
@@ -13,8 +36,6 @@ Creates initial individual for the GA to utilize.
 Does so by taking a random melody, shuffling the
 melody, and using that as an individual in the GA
 '''
-
-
 def create_individual(data):
     individual = data[:]
     random.shuffle(individual)
@@ -135,49 +156,39 @@ may be passed back to the GA. If multiple Individuals
 have the same Fitness result, the first one is returned.
 '''
 def selection(population):
-    # print(population)
     best_individual = None
     best_fitness_result = 0
      
+    # find individual with best fitness result and save it
     for individual in population:
         if individual.fitness > best_fitness_result:
             best_individual = individual
             best_fitness_result = individual.fitness
               
     return best_individual
-
-
-def create_MIDI_file_for(name, melody):
-    degrees = melody.copy()  # melody.py output
-
-    for index in range(len(degrees)):
-        degrees[index] = int(degrees[index]) + 60
-
-    track = 0
-    channel = 0
-    time = 0  # In beats
-    duration = 1  # In beats
-    tempo = 100  # In BPM
-    volume = 100  # 0-127, as per the MIDI standard
-
-    # One track, defaults to format 1 (tempo track is created automatically)
-    MyMIDI = MIDIFile(1)
-    
-    MyMIDI.addTempo(track, time, tempo)
-
-    for i, pitch in enumerate(degrees):
-        MyMIDI.addNote(track, channel, pitch, time + i, duration, volume)
-
-    with open(name + ".mid", "wb") as output_file:
-        MyMIDI.writeFile(output_file)
          
+"""
+To Garvey: 
+The number of notes in the melody may be changed
+to whatever value you would like; in our example, we
+use 9 notes. To adjust this, change the initial parameter, x,
+of Melody(x) to whatever you'd like! The larger it is,
+the longer the melody you will produce!
+"""
 # Initial melody (nine notes) to utilize in GA
 beginning_melody = Melody(9)
 
 # Store notes in modifiable variable to be given to GA
 data = beginning_melody.notes.copy()
 
+# The code below is provided by the library to allow us to 
+# initialize the GA however we see fit/in a way which 
+# best suits our needs. The defined options, which are
+# passed as initial parameters, are also provided by the
+# library and defined by us. 
+
 # Initialize the GA with the given parameters
+# These values may be changed to experience different outputs of the GA
 music_generator = pyeasyga.GeneticAlgorithm(data,
                                             population_size=200,
                                             generations=200,
@@ -186,21 +197,31 @@ music_generator = pyeasyga.GeneticAlgorithm(data,
                                             elitism=True,
                                             maximise_fitness=True)
 
+# The code below is provided by the library to allow us to
+# assign our own personally generated functions and definitions
+# to the GA to be used during execution. The assignment and execution
+# of these functions are handled by the library but the creation
+# of the functions is handled by use.
+
 # Set GA functions and attributes equal to those we created
 music_generator.create_individual = create_individual
 music_generator.fitness_function = fitness
 music_generator.mutate_function = mutate
 music_generator.selection_function = selection
 
+# Provided by pyeasyGA to execute the algorithm
 # Run that sucker!
 music_generator.run()
 
-# Retrieve optimal melody
+# Retrieve optimal melody; provided and performed by pyeasyGA library
 final_melody = music_generator.best_individual()
 
 # Create MIDI files for initial and final
-create_MIDI_file_for("initial", beginning_melody.notes)
-create_MIDI_file_for("final", final_melody[1])
+initial_melody_MIDI = MIDI("initial_melody", beginning_melody.notes)
+initial_melody_MIDI.create_MIDI_file()
+final_melody_MIDI = MIDI("final_melody", final_melody[1])
+final_melody_MIDI.create_MIDI_file()
+
 
 # Print beginning and ending melodies
 print("Initial Random Melody: ")
